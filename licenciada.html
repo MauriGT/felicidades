@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¡Felicitaciones, Licenciada!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F3E7E4;
+  --bg-deep: #E9D3CF;
+  --ink: #2A2320;
+  --muted: #6E5F5A;
+  --paper: #FBF6E9;
+  --paper-edge: #E8DCC0;
+  --gold: #B8913A;
+  --gold-soft: #D9BC74;
+  --ribbon: #8E2F3C;
+  --paper-ink: #2A2320;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1B2A23;
+    --bg-deep: #13201A;
+    --ink: #F4ECDC;
+    --muted: #BFB49F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1B2A23;
+  --bg-deep: #13201A;
+  --ink: #F4ECDC;
+  --muted: #BFB49F;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(120% 80% at 50% 0%, var(--bg) 40%, var(--bg-deep) 100%);
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: "Jost", "Helvetica Neue", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+canvas#confetti {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 5;
+}
+main {
+  width: 100%;
+  max-width: 460px;
+  padding: 2rem 1.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Rolled diploma (closed state) */
+.scroll-btn {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 1.75rem;
+  color: var(--ink); font: inherit;
+}
+.scroll-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 10px; border-radius: 12px; }
+.roll {
+  position: relative;
+  width: 260px; height: 64px;
+  border-radius: 32px;
+  background: linear-gradient(180deg, #fffaf0 0%, var(--paper) 35%, var(--paper-edge) 80%, #d4c4a0 100%);
+  box-shadow: 0 18px 30px -14px rgba(40, 25, 10, .45);
+  transform: rotate(-8deg);
+  animation: bob 3.2s ease-in-out infinite;
+}
+.roll::before, .roll::after {
+  content: ""; position: absolute; top: 4px; width: 56px; height: 56px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #e9dcbc 0 18%, var(--paper) 19% 34%, #e3d4b0 35% 50%, var(--paper) 51% 70%, #d8c7a2 71%);
+}
+.roll::before { left: -6px; }
+.roll::after { right: -6px; }
+.ribbon {
+  position: absolute; left: 50%; top: -4px; width: 26px; height: 72px;
+  transform: translateX(-50%);
+  background: var(--ribbon);
+  border-radius: 3px;
+  box-shadow: inset -4px 0 0 rgba(0,0,0,.15);
+}
+.ribbon::before, .ribbon::after {
+  content: ""; position: absolute; bottom: -34px; width: 16px; height: 40px; background: var(--ribbon);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+}
+.ribbon::before { left: -6px; transform: rotate(14deg); }
+.ribbon::after { right: -6px; transform: rotate(-14deg); }
+.seal {
+  position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 60%, #8a6a24);
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  display: grid; place-items: center;
+}
+.seal svg { width: 26px; height: 26px; }
+.hint-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 600; font-size: clamp(1.9rem, 8vw, 2.4rem); line-height: 1.1; margin: 0;
+}
+.hint-sub { margin: .25rem 0 0; color: var(--muted); font-size: 1rem; }
+@keyframes bob {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  50% { transform: rotate(-6deg) translateY(-8px); }
+}
+
+/* Open diploma */
+.diploma {
+  display: none;
+  position: relative;
+  width: 100%;
+  background: var(--paper);
+  color: var(--paper-ink);
+  padding: 2.75rem 1.75rem 2.25rem;
+  border-radius: 6px;
+  box-shadow: 0 30px 60px -25px rgba(30, 20, 10, .55), 0 0 0 1px var(--paper-edge);
+  transform-origin: 50% 0;
+}
+.diploma.show { display: block; animation: unroll 1.1s cubic-bezier(.2,.8,.2,1) both; }
+.diploma::before {
+  content: ""; position: absolute; inset: 12px;
+  border: 1.5px solid var(--gold); border-radius: 3px; pointer-events: none;
+}
+.diploma::after {
+  content: ""; position: absolute; inset: 17px;
+  border: .5px solid var(--gold-soft); border-radius: 2px; pointer-events: none;
+}
+@keyframes unroll {
+  from { clip-path: inset(0 0 100% 0); transform: scaleY(.6); opacity: .4; }
+  to { clip-path: inset(0 0 0 0); transform: scaleY(1); opacity: 1; }
+}
+.cap { width: 64px; height: 64px; margin: 0 auto .5rem; display: block; }
+.d-pre {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic; font-size: 1.25rem; color: #6E5F5A; margin: 0;
+}
+.d-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(3rem, 15vw, 4.4rem);
+  line-height: .95;
+  letter-spacing: -.01em;
+  margin: .35rem 0 .2rem;
+  background: linear-gradient(100deg, #8a6a24 0%, var(--gold) 35%, #e6cd8a 50%, var(--gold) 65%, #8a6a24 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: shine 4s ease-in-out 1.2s infinite;
+}
+@keyframes shine { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
+.d-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic; font-weight: 500; font-size: 1.6rem; margin: 0 0 1.5rem;
+}
+.flourish { width: 140px; height: 14px; margin: 0 auto 1.5rem; display: block; color: var(--gold); }
+.d-msg {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.22rem; line-height: 1.6; margin: 0 auto 1rem; max-width: 34ch;
+}
+.d-sign {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic; font-size: 1.25rem; margin: 1.75rem 0 0;
+}
+.d-sign span { display: block; font-style: normal; font-family: "Jost", Arial, sans-serif; font-size: .9rem; color: #6E5F5A; margin-top: .2rem; }
+.again {
+  display: none;
+  margin-top: 1.75rem;
+  appearance: none; cursor: pointer;
+  font: 500 1rem "Jost", Arial, sans-serif;
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--gold);
+  border-radius: 999px;
+  padding: .75rem 1.5rem;
+}
+.again.show { display: inline-block; }
+.again:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .roll, .d-title { animation: none; }
+  .diploma.show { animation: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<main>
+  <button class="scroll-btn" id="open" aria-label="Abrir el diploma">
+    <div class="roll" aria-hidden="true">
+      <div class="ribbon"></div>
+      <div class="seal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#5c4415" stroke-width="1.6" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5Z"/><path d="M6 11v4.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V11"/></svg>
+      </div>
+    </div>
+    <div>
+      <p class="hint-title">Tengo algo para vos</p>
+      <p class="hint-sub">Tocá el diploma para abrirlo</p>
+    </div>
+  </button>
+
+  <article class="diploma" id="diploma" aria-live="polite">
+    <svg class="cap" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 12 4 25l28 13 28-13-28-13Z" fill="#2A2320"/>
+      <path d="M14 30v11c0 4 8 7.5 18 7.5S50 45 50 41V30L32 38 14 30Z" fill="#3a302b"/>
+      <path d="M56 27v14" stroke="#B8913A" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="56" cy="44" r="3" fill="#B8913A"/>
+    </svg>
+    <p class="d-pre">¡Felicitaciones,</p>
+    <h1 class="d-title">Licenciada!</h1>
+    <p class="d-name">mi amor</p>
+    <svg class="flourish" viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+      <path d="M2 7h50M88 7h50"/><path d="M70 2l5 5-5 5-5-5 5-5Z" fill="currentColor"/><circle cx="58" cy="7" r="1.6" fill="currentColor"/><circle cx="82" cy="7" r="1.6" fill="currentColor"/>
+    </svg>
+    <p class="d-msg">Todas las noches de estudio, los nervios antes de cada final, los mates fríos y los apuntes desparramados por toda la casa valieron la pena.</p>
+    <p class="d-msg">Hoy sos licenciada, y no podría sentir más orgullo de vos. Lo lograste con tu esfuerzo, tu cabeza y ese corazón enorme que tenés.</p>
+    <p class="d-msg">Esto recién empieza, y voy a estar a tu lado en cada paso que venga.</p>
+    <p class="d-sign">Con todo mi amor<span>tu persona favorita</span></p>
+  </article>
+
+  <button class="again" id="again">Tirar más papelitos</button>
+</main>
+
+<script>
+(function () {
+  var openBtn = document.getElementById('open');
+  var diploma = document.getElementById('diploma');
+  var again = document.getElementById('again');
+  var canvas = document.getElementById('confetti');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pieces = [];
+  var running = false;
+  var colors = ['#B8913A', '#D9BC74', '#8E2F3C', '#E8B4B8', '#FBF6E9', '#2E5A45'];
+
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = innerWidth * dpr;
+    canvas.height = innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  function burst(count) {
+    if (reduce) return;
+    for (var i = 0; i < count; i++) {
+      var cap = Math.random() < 0.12;
+      pieces.push({
+        x: innerWidth / 2 + (Math.random() - 0.5) * 80,
+        y: innerHeight * 0.45,
+        vx: (Math.random() - 0.5) * 14,
+        vy: -Math.random() * 16 - 6,
+        size: cap ? 16 : Math.random() * 7 + 5,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        cap: cap,
+        life: 0
+      });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+
+  function drawCap(p) {
+    var s = p.size;
+    ctx.fillStyle = '#2A2320';
+    ctx.beginPath();
+    ctx.moveTo(0, -s * 0.5); ctx.lineTo(s, 0); ctx.lineTo(0, s * 0.5); ctx.lineTo(-s, 0); ctx.closePath();
+    ctx.fill();
+    ctx.fillRect(-s * 0.5, 0, s, s * 0.45);
+    ctx.fillStyle = '#B8913A';
+    ctx.fillRect(s * 0.75, 0, 2, s * 0.7);
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (var i = pieces.length - 1; i >= 0; i--) {
+      var p = pieces[i];
+      p.life++;
+      p.vy += 0.35;
+      p.vx *= 0.985;
+      p.vy *= 0.985;
+      p.x += p.vx + Math.sin(p.life / 10) * 0.6;
+      p.y += p.vy;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      if (p.cap) { drawCap(p); }
+      else {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2 * Math.abs(Math.cos(p.life / 6)) + 1);
+      }
+      ctx.restore();
+      if (p.y > innerHeight + 40) pieces.splice(i, 1);
+    }
+    if (pieces.length) requestAnimationFrame(tick);
+    else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+  }
+
+  openBtn.addEventListener('click', function () {
+    openBtn.style.display = 'none';
+    diploma.classList.add('show');
+    again.classList.add('show');
+    burst(170);
+    setTimeout(function () { burst(90); }, 700);
+    if (navigator.vibrate) { try { navigator.vibrate([40, 60, 40]); } catch (e) {} }
+  });
+  again.addEventListener('click', function () { burst(150); });
+})();
+</script>
+</body>
+</html>
